@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:text="$"
         android:layout_centerVertical="true" />
-    
+
     <TextView
         android:id="@+id/precio"
         android:layout_width="60dp"
