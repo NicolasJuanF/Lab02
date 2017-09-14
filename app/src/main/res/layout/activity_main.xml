@@ -49,7 +49,8 @@
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:text="TextView" />
+        android:text="TextView"
+        android:visibility="invisible"/>
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radioGroup"
@@ -87,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/lableBontonAgregar"
-            android:layout_weight="1.88" />
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/botonConfirmar"
@@ -106,10 +107,9 @@
     </LinearLayout>
 
     <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/listaItems"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
 </LinearLayout>
