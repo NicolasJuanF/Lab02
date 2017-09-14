@@ -1,4 +1,4 @@
-package frsf.isi.grupojf.lab02;
+package frsf.isi.grupojf.lab02.modelo;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

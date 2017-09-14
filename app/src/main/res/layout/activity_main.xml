@@ -40,13 +40,7 @@
         android:paddingEnd="30dp" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/textoPedido" />
-
-    <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textoPedido"
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:text="TextView"
