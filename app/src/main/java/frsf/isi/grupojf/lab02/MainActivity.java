@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     private Spinner spinnerHora;
     private TextView textoPedido;
     private ToggleButton toggleReserva;
+    private RadioGroup radioGroup;
 
     //declaraciones lista
     private Utils utils;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
 
         //seteo de listener a group de radiobuttons
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(this);
 
 
@@ -69,25 +71,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         utils.iniciarListas();
         miLista = (ListView) findViewById(R.id.listaItems);
         miLista.setOnItemClickListener(this);
-
-
-
-
-    }
-    @Override
-    public void onClick(View v) {
-        final int id = v.getId();
-        switch (id){
-            case R.id.botonAgregar:
-                Log.v("boton" , "boton agregar");
-                break;
-            case R.id.botonConfirmar:
-
-                break;
-            case R.id.botonReiniciar:
-
-                break;
-        }
+        miLista.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
     }
 
@@ -116,17 +100,17 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
             case  R.id.radio1:
                 //cargar lista platos
                 elementos=utils.getListaPlatos();
-                miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_expandable_list_item_1, elementos);
+                miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, elementos);
                 break;
             case R.id.radio2:
                 //cargar lista Bebidas
                 elementos=utils.getListaBebidas();
-                miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_expandable_list_item_1, elementos);
+                miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, elementos);
                 break;
             case R.id.radio3:
                 //cargar lista
                 elementos=utils.getListaPostre();
-                miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_expandable_list_item_1, elementos);
+                miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, elementos);
                 break;
         }
         miLista.setAdapter(miAdaptador);
@@ -136,45 +120,45 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         itemSeleccionado = (Utils.ElementoMenu) miLista.getItemAtPosition(position);
     }
 
-    // @Override
-    // public void onClick(View boton) {
-    //     switch(boton.getId()) {
-    //         case R.id.buttonAgregar:
-    //             if (seleccion != null && !confirmado) {
-    //                 pedido.append(seleccion.toString() + '\n');
-    //                 precioTotal += seleccion.getPrecio();
-    //                 tipoPedido.clearCheck();
-    //                 seleccion = null;
-    //             } else if (seleccion == null) {
-    //                 Toast.makeText(getApplicationContext(), "Debes seleccionar algo",
-    //                         Toast.LENGTH_SHORT).show();
-    //             }
-    //             else if(confirmado) {
-    //                 Toast.makeText(getApplicationContext(), "Ya se ha confirmado el pedido",
-    //                         Toast.LENGTH_SHORT).show();
-    //             }
-    //             break;
-    //         case R.id.buttonReiniciar:
-    //             pedido.setText("");
-    //             seleccion = null;
-    //             tipoPedido.clearCheck();
-    //             precioTotal = 0;
-    //             confirmado = false;
-    //             break;
-    //         case R.id.buttonConfirmar:
-    //             if(!confirmado && precioTotal != 0) {
-    //                 pedido.append(String.format("\nTotal: $%.2f", precioTotal));
-    //                 confirmado = true;
-    //             }
-    //             else if(confirmado) {
-    //                 Toast.makeText(getApplicationContext(), "El pedido ya fue confirmado",
-    //                         Toast.LENGTH_SHORT).show();
-    //             }
-    //             else {
-    //                 Toast.makeText(getApplicationContext(), "Debes pedir algo primero",
-    //                         Toast.LENGTH_SHORT).show();
-    //             }
-    //             break;
-    //     }
-    // }
+     @Override
+     public void onClick(View boton) {
+         switch(boton.getId()) {
+             case R.id.botonAgregar:
+                 if (itemSeleccionado != null && !confirmado) {
+                     textoPedido.append(itemSeleccionado.toString() + '\n');
+                     precioTotal += itemSeleccionado.getPrecio();
+                     radioGroup.clearCheck();
+                     itemSeleccionado = null;
+                 } else if (itemSeleccionado == null) {
+                     Toast.makeText(getApplicationContext(), "Debes seleccionar algo",
+                             Toast.LENGTH_SHORT).show();
+                 }
+                 else if(confirmado) {
+                     Toast.makeText(getApplicationContext(), "Ya se ha confirmado el pedido",
+                             Toast.LENGTH_SHORT).show();
+                 }
+                 break;
+             case R.id.botonReiniciar:
+                 textoPedido.setText("");
+                 itemSeleccionado = null;
+                 radioGroup.clearCheck();
+                 precioTotal = 0;
+                 confirmado = false;
+                 break;
+             case R.id.botonConfirmar:
+                 if(!confirmado && precioTotal != 0) {
+                     textoPedido.append(String.format("\nTotal: $%.2f", precioTotal));
+                     confirmado = true;
+                 }
+                 else if(confirmado) {
+                     Toast.makeText(getApplicationContext(), "El pedido ya fue confirmado",
+                             Toast.LENGTH_SHORT).show();
+                 }
+                 else {
+                     Toast.makeText(getApplicationContext(), "Debes pedir algo primero",
+                             Toast.LENGTH_SHORT).show();
+                 }
+                 break;
+         }
+     }
 }

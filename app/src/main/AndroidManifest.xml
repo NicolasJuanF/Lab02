@@ -16,7 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".pago_pedido"></activity>
+        <activity android:name=".pago_pedido_activity"></activity>
     </application>
 
 </manifest>

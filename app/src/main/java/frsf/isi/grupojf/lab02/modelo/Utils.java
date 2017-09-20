@@ -13,7 +13,7 @@ public class Utils {
     private ElementoMenu[] listaPlatos;
     private ElementoMenu[] listaPostre;
 
-    class ElementoMenu {
+    public class ElementoMenu {
         private Integer id;
         private String nombre;
         private Double precio;
