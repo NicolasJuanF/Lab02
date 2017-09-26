@@ -11,4 +11,6 @@
     <string name="lableBontonAgregar">AGREGAR</string>
     <string name="lableBotonReiniciar">REINICIAR</string>
     <string name="lableBontonConfirmar">CONFIRMAR PEDIDO</string>
+    <string name="agregarVacio">Debes seleccionar algo</string>
+    <string name="yaConfirmado">Ya se ha confirmado el pedido</string>
 </resources>

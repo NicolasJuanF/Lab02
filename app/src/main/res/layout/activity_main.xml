@@ -43,8 +43,7 @@
         android:id="@+id/textoPedido"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:text="TextView"
-        android:visibility="invisible"/>
+        android:visibility="visible"/>
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radioGroup"

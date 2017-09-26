@@ -1,7 +1,9 @@
 package frsf.isi.grupojf.lab02;
+import frsf.isi.grupojf.lab02.modelo.Pedido;
 import frsf.isi.grupojf.lab02.modelo.Utils;
 import frsf.isi.grupojf.lab02.modelo.TipoBebida;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-
-
-
 /* Glosario:
     - Elementos de vista comienzan con : list (listas) , tv(Text View), sp (spinner),
     -
@@ -26,11 +25,17 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity implements  View.OnClickListener  , RadioGroup.OnCheckedChangeListener, AdapterView.OnItemClickListener {
 
+    private static final String TAG = "REGISTRO";
+
+
+    private final Integer CODIGO_ESTATUS = 200;
     private ArrayAdapter<CharSequence> adapter; //adaptador spinner
     private Spinner spinnerHora;
     private TextView textoPedido;
     private ToggleButton toggleReserva;
     private RadioGroup radioGroup;
+
+    private Boolean confirmado=false;
 
     //declaraciones lista
     private Utils utils;
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     private Utils.ElementoMenu itemSeleccionado=null;
     private ArrayAdapter<Utils.ElementoMenu> miAdaptador;//adaptador lista
 
+    private Pedido pedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
         //toggleButton
         toggleReserva = (ToggleButton) findViewById(R.id.toggleButton);
+        textoPedido = (TextView) findViewById(R.id.textoPedido);
 
 
         //seteo de listener a group de radiobuttons
@@ -92,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         }
     }
 
+
     public void onRadioButtonClicked(View v){
         final int id = v.getId();
         switch (id){
@@ -115,9 +123,11 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         }
         miLista.setAdapter(miAdaptador);
     }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         itemSeleccionado = (Utils.ElementoMenu) miLista.getItemAtPosition(position);
+
     }
 
      @Override
@@ -125,16 +135,16 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
          switch(boton.getId()) {
              case R.id.botonAgregar:
                  if (itemSeleccionado != null && !confirmado) {
+                     Log.v(TAG, itemSeleccionado.toString());
                      textoPedido.append(itemSeleccionado.toString() + '\n');
-                     precioTotal += itemSeleccionado.getPrecio();
                      radioGroup.clearCheck();
                      itemSeleccionado = null;
                  } else if (itemSeleccionado == null) {
-                     Toast.makeText(getApplicationContext(), "Debes seleccionar algo",
+                     Toast.makeText(getApplicationContext(), R.string.agregarVacio,
                              Toast.LENGTH_SHORT).show();
                  }
                  else if(confirmado) {
-                     Toast.makeText(getApplicationContext(), "Ya se ha confirmado el pedido",
+                     Toast.makeText(getApplicationContext(), R.string.yaConfirmado,
                              Toast.LENGTH_SHORT).show();
                  }
                  break;
@@ -142,23 +152,73 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                  textoPedido.setText("");
                  itemSeleccionado = null;
                  radioGroup.clearCheck();
-                 precioTotal = 0;
                  confirmado = false;
                  break;
              case R.id.botonConfirmar:
-                 if(!confirmado && precioTotal != 0) {
-                     textoPedido.append(String.format("\nTotal: $%.2f", precioTotal));
-                     confirmado = true;
-                 }
-                 else if(confirmado) {
-                     Toast.makeText(getApplicationContext(), "El pedido ya fue confirmado",
-                             Toast.LENGTH_SHORT).show();
-                 }
-                 else {
-                     Toast.makeText(getApplicationContext(), "Debes pedir algo primero",
-                             Toast.LENGTH_SHORT).show();
+                 if(!confirmado) {
+                     Double total = 0.0;
+
+                     for (Utils.ElementoMenu unElemento:pedido.getPlato()
+                             ) {
+                         if(unElemento != null) total += unElemento.getPrecio();
+
+                     }
+
+                     for (Utils.ElementoMenu unElemento:pedido.getBebida()
+                             ) {
+                         if(unElemento != null) total += unElemento.getPrecio();
+                     }
+
+                     for (Utils.ElementoMenu unElemento:pedido.getPostre()
+                             ) {
+                         if(unElemento!= null) total += unElemento.getPrecio();
+                     }
+
+
+                     pedido.setCosto(total);
+                     pedido.setEsDelivery(toggleReserva.isChecked());
+                     pedido.setHoraEntrega(spinnerHora.getSelectedItem().toString());
+
+                     Intent intent = new Intent(MainActivity.this, pago_pedido_activity.class);
+                     intent.putExtra("pedido", pedido);
+                     startActivityForResult(intent, CODIGO_ESTATUS);
+                 } else {
+                     //mostrar errores
                  }
                  break;
          }
      }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("pedido", pedido);
+        outState.putBoolean("confirmado", confirmado);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        pedido = (Pedido) savedInstanceState.getSerializable("pedido");
+        confirmado = savedInstanceState.getBoolean("confirmado");
+
+        StringBuilder texto = new StringBuilder("");
+        for (Utils.ElementoMenu unElemento:pedido.getPlato()
+             ) {
+            if(pedido.getPlato() != null) texto.append(pedido.getPlato().toString()).append("\n");
+
+        }
+
+        for (Utils.ElementoMenu unElemento:pedido.getBebida()
+                ) {
+            if(pedido.getBebida() != null) texto.append(pedido.getBebida().toString()).append("\n");
+        }
+
+        for (Utils.ElementoMenu unElemento:pedido.getPostre()
+                ) {
+            if(pedido.getPostre() != null) texto.append(pedido.getPostre().toString()).append("\n");
+        }
+
+        textoPedido.setText(texto.toString());
+
+    }
 }

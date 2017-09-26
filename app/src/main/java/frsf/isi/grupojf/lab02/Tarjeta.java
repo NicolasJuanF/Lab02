@@ -7,7 +7,7 @@ import java.util.Date;
  * Created by Nicolas on 14/9/2017.
  */
 
-public class Tarjeta {
+public class Tarjeta implements java.io.Serializable{
 
 
     private String nombre;
