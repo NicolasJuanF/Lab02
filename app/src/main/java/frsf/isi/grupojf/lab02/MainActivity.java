@@ -239,6 +239,10 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                 confirmado = true;
                 Tarjeta tarjeta = (Tarjeta) data.getSerializableExtra("tarjeta");
                 pedido = (Pedido) data.getSerializableExtra("pedido");
+//                pedido.setNombre();//no se de que nombre habla
+                pedido.setNombreCliente(tarjeta.getNombre());
+                pedido.setEmail(tarjeta.getCorreo());
+
 
                 double monto = pedido.getCosto();
 //                DecimalFormat df = new DecimalFormat("##.##");
