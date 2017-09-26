@@ -1,7 +1,7 @@
 package frsf.isi.grupojf.lab02;
 import frsf.isi.grupojf.lab02.modelo.Pedido;
+import frsf.isi.grupojf.lab02.modelo.Tarjeta;
 import frsf.isi.grupojf.lab02.modelo.Utils;
-import frsf.isi.grupojf.lab02.modelo.TipoBebida;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         miLista = (ListView) findViewById(R.id.listaItems);
         miLista.setOnItemClickListener(this);
         miLista.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
+        pedido = new Pedido();
     }
 
     @Override
@@ -105,17 +105,17 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         switch (id){
             case -1:
                 break;
-            case  R.id.radio1:
+            case  R.id.radioPlato:
                 //cargar lista platos
                 elementos=utils.getListaPlatos();
                 miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, elementos);
                 break;
-            case R.id.radio2:
+            case R.id.radioBebida:
                 //cargar lista Bebidas
                 elementos=utils.getListaBebidas();
                 miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, elementos);
                 break;
-            case R.id.radio3:
+            case R.id.radioPostre:
                 //cargar lista
                 elementos=utils.getListaPostre();
                 miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, elementos);
@@ -127,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         itemSeleccionado = (Utils.ElementoMenu) miLista.getItemAtPosition(position);
-
     }
 
      @Override
@@ -137,7 +136,19 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                  if (itemSeleccionado != null && !confirmado) {
                      Log.v(TAG, itemSeleccionado.toString());
                      textoPedido.append(itemSeleccionado.toString() + '\n');
-                     radioGroup.clearCheck();
+                     switch (itemSeleccionado.getTipo()){
+                         case PRINCIPAL:
+                             pedido.addPlato(itemSeleccionado);
+                             break;
+                         case POSTRE:
+                             pedido.addPostre(itemSeleccionado);
+                         break;
+                         case BEBIDA:
+                             pedido.addBebida(itemSeleccionado);
+                         break;
+
+                     }
+
                      itemSeleccionado = null;
                  } else if (itemSeleccionado == null) {
                      Toast.makeText(getApplicationContext(), R.string.agregarVacio,
@@ -149,10 +160,13 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                  }
                  break;
              case R.id.botonReiniciar:
+                 Utils.ElementoMenu[] vacio = new Utils.ElementoMenu[0];
                  textoPedido.setText("");
                  itemSeleccionado = null;
                  radioGroup.clearCheck();
                  confirmado = false;
+                 miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, vacio);
+                 miLista.setAdapter(miAdaptador);
                  break;
              case R.id.botonConfirmar:
                  if(!confirmado) {
@@ -183,7 +197,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                      intent.putExtra("pedido", pedido);
                      startActivityForResult(intent, CODIGO_ESTATUS);
                  } else {
-                     //mostrar errores
+                     Toast.makeText(getApplicationContext(), R.string.yaConfirmado,
+                             Toast.LENGTH_SHORT).show();
                  }
                  break;
          }
@@ -200,25 +215,51 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         super.onRestoreInstanceState(savedInstanceState);
         pedido = (Pedido) savedInstanceState.getSerializable("pedido");
         confirmado = savedInstanceState.getBoolean("confirmado");
-
+        Utils.ElementoMenu[] listaPlatos = pedido.getPlato();
+        Utils.ElementoMenu[] listaPostres= pedido.getPostre();
+        Utils.ElementoMenu[] listaBebidas= pedido.getBebida();
         StringBuilder texto = new StringBuilder("");
-        for (Utils.ElementoMenu unElemento:pedido.getPlato()
-             ) {
-            if(pedido.getPlato() != null) texto.append(pedido.getPlato().toString()).append("\n");
+        if(listaPlatos != null){
 
+            for (Utils.ElementoMenu unElemento : listaPlatos
+                    ) {
+                if (unElemento != null) texto.append(unElemento.toString()).append("\n");
+
+            }
         }
-
-        for (Utils.ElementoMenu unElemento:pedido.getBebida()
-                ) {
-            if(pedido.getBebida() != null) texto.append(pedido.getBebida().toString()).append("\n");
+        if(listaPostres!=null) {
+            for (Utils.ElementoMenu unElemento : listaPostres
+                    ) {
+                if (unElemento != null) texto.append(unElemento.toString()).append("\n");
+            }
         }
-
-        for (Utils.ElementoMenu unElemento:pedido.getPostre()
-                ) {
-            if(pedido.getPostre() != null) texto.append(pedido.getPostre().toString()).append("\n");
+        if(listaBebidas != null) {
+            for (Utils.ElementoMenu unElemento : listaBebidas
+                    ) {
+                if (unElemento != null) texto.append(unElemento.toString()).append("\n");
+            }
         }
-
         textoPedido.setText(texto.toString());
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == CODIGO_ESTATUS) {
+            if(resultCode == RESULT_OK) {
+                confirmado = true;
+                Tarjeta tarjeta = (Tarjeta) data.getSerializableExtra("tarjeta");
+                pedido = (Pedido) data.getSerializableExtra("pedido");
+
+                double monto = pedido.getCosto();
+//                DecimalFormat df = new DecimalFormat("##.##");
+//                txtDetallesPedido.setText(txtDetallesPedido.getText().toString() + "\nTotal: $ " + df.format(monto));
+
+                Toast.makeText(getApplicationContext(), getString(R.string.mensajeConfirmado, monto), Toast.LENGTH_SHORT).show();
+            } else if(resultCode == RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), R.string.mensajeCancelado, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }

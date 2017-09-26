@@ -13,4 +13,14 @@
     <string name="lableBontonConfirmar">CONFIRMAR PEDIDO</string>
     <string name="agregarVacio">Debes seleccionar algo</string>
     <string name="yaConfirmado">Ya se ha confirmado el pedido</string>
+    <string name="nombre">Nombre</string>
+    <string name="correo">Correo Electronico</string>
+    <string name="codigo_tarjeta">Código de Seguridad</string>
+    <string name="numero_tarjeta">Nro Tajerta</string>
+    <string name="fecha">Fecha Vencimiento</string>
+    <string name="lableBotonConfirmarPAgo">Confirmar Pago</string>
+    <string name="lableBontonCancelar">Cancelar</string>
+    <string name="campos_requeridos">Debe Completar Todos los Campos</string>
+    <string name="mensajeConfirmado">El pedido a sido confirmado con un precio de: $ %1$.2f </string>
+    <string name="mensajeCancelado">El pedido a sido cancelado</string>
 </resources>

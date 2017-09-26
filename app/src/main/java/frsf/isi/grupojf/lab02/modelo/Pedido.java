@@ -13,6 +13,7 @@ public class Pedido implements java.io.Serializable {
     private Double costo;
     private Boolean esDelivery;
     private String horaEntrega;
+
     private Utils.ElementoMenu[] bebida;
     private Utils.ElementoMenu[] plato;
     private Utils.ElementoMenu[] postre;
@@ -27,6 +28,14 @@ public class Pedido implements java.io.Serializable {
         this.bebida = bebida;
         this.plato = plato;
         this.postre = postre;
+    }
+
+    public Pedido(){
+
+        this.costo = 0.0;
+        this.bebida = new Utils.ElementoMenu[0];
+        this.plato = new Utils.ElementoMenu[0];
+        this.postre = new Utils.ElementoMenu[0];
     }
 
     public String getNombreCliente() {
@@ -100,6 +109,17 @@ public class Pedido implements java.io.Serializable {
     public void setPostre(Utils.ElementoMenu[] postre) {
         this.postre = postre;
     }
+
+    public void addPlato(Utils.ElementoMenu unPlato){
+
+    }
+    public void addPostre(Utils.ElementoMenu unPostre){
+
+    }
+    public void addBebida(Utils.ElementoMenu unaBebida){
+
+    }
+
 
     @Override
     public String toString() {
