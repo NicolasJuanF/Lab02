@@ -17,18 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-/* Glosario:
-    - Elementos de vista comienzan con : list (listas) , tv(Text View), sp (spinner),
-    -
 
-*/
 
 public class MainActivity extends AppCompatActivity implements  View.OnClickListener  , RadioGroup.OnCheckedChangeListener, AdapterView.OnItemClickListener {
 
     private static final String TAG = "REGISTRO";
 
 
-    private final Integer CODIGO_ESTATUS = 200;
+    private final Integer CODIGO = 1;
     private ArrayAdapter<CharSequence> adapter; //adaptador spinner
     private Spinner spinnerHora;
     private TextView textoPedido;
@@ -39,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
     //declaraciones lista
     private Utils utils;
-    private ListView miLista;
+    private ListView lv;
     private Utils.ElementoMenu[] elementos;
     private Utils.ElementoMenu itemSeleccionado=null;
     private ArrayAdapter<Utils.ElementoMenu> miAdaptador;//adaptador lista
@@ -76,9 +72,9 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         //Iniciar Utils y generar las listas
         utils = new Utils();
         utils.iniciarListas();
-        miLista = (ListView) findViewById(R.id.listaItems);
-        miLista.setOnItemClickListener(this);
-        miLista.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        lv = (ListView) findViewById(R.id.listaItems);
+        lv.setOnItemClickListener(this);
+        lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         pedido = new Pedido();
     }
 
@@ -87,13 +83,13 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         switch (id){
             case -1:
                 break;
-            case R.id.radio1:
+            case R.id.radioPlato:
 
                 break;
-            case R.id.radio2:
+            case R.id.radioPostre:
 
                 break;
-            case R.id.radio3:
+            case R.id.radioBebida:
 
                 break;
         }
@@ -121,35 +117,60 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                 miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, elementos);
                 break;
         }
-        miLista.setAdapter(miAdaptador);
+        lv.setAdapter(miAdaptador);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        itemSeleccionado = (Utils.ElementoMenu) miLista.getItemAtPosition(position);
+        itemSeleccionado = (Utils.ElementoMenu) lv.getItemAtPosition(position);
     }
 
      @Override
      public void onClick(View boton) {
+         Utils.ElementoMenu[] vacio = new Utils.ElementoMenu[0]; // seteo un arreglo vacio por si agrega o reinicia
          switch(boton.getId()) {
              case R.id.botonAgregar:
                  if (itemSeleccionado != null && !confirmado) {
                      Log.v(TAG, itemSeleccionado.toString());
-                     textoPedido.append(itemSeleccionado.toString() + '\n');
+
                      switch (itemSeleccionado.getTipo()){
                          case PRINCIPAL:
-                             pedido.addPlato(itemSeleccionado);
+                             if(pedido.getPlato() == null){
+                                 pedido.setPlato(itemSeleccionado);
+                                 textoPedido.append(itemSeleccionado.toString() + '\n');
+                             }else{
+                                 Toast.makeText(getApplicationContext(), R.string.plato_ya_agregado,
+                                         Toast.LENGTH_SHORT).show();
+                             }
+
                              break;
                          case POSTRE:
-                             pedido.addPostre(itemSeleccionado);
+                             if(pedido.getPostre() == null){
+                                 pedido.setPostre(itemSeleccionado);
+                                 textoPedido.append(itemSeleccionado.toString() + '\n');
+                             }else{
+                                 Toast.makeText(getApplicationContext(), R.string.postre_ya_agregado,
+                                         Toast.LENGTH_SHORT).show();
+                             }
+
                          break;
                          case BEBIDA:
-                             pedido.addBebida(itemSeleccionado);
+                             if(pedido.getBebida() == null){
+                                 pedido.setBebida(itemSeleccionado);
+                                 textoPedido.append(itemSeleccionado.toString() + '\n');
+                             }else{
+                                 Toast.makeText(getApplicationContext(), R.string.bebida_ya_agregado,
+                                         Toast.LENGTH_SHORT).show();
+                             }
+
                          break;
 
                      }
-
+                     radioGroup.clearCheck();
                      itemSeleccionado = null;
+                     miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, vacio);
+                     lv.setAdapter(miAdaptador);
+
                  } else if (itemSeleccionado == null) {
                      Toast.makeText(getApplicationContext(), R.string.agregarVacio,
                              Toast.LENGTH_SHORT).show();
@@ -160,42 +181,28 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                  }
                  break;
              case R.id.botonReiniciar:
-                 Utils.ElementoMenu[] vacio = new Utils.ElementoMenu[0];
                  textoPedido.setText("");
                  itemSeleccionado = null;
                  radioGroup.clearCheck();
                  confirmado = false;
                  miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, vacio);
-                 miLista.setAdapter(miAdaptador);
+                 lv.setAdapter(miAdaptador);
                  break;
              case R.id.botonConfirmar:
                  if(!confirmado) {
                      Double total = 0.0;
-
-                     for (Utils.ElementoMenu unElemento:pedido.getPlato()
-                             ) {
-                         if(unElemento != null) total += unElemento.getPrecio();
-
-                     }
-
-                     for (Utils.ElementoMenu unElemento:pedido.getBebida()
-                             ) {
-                         if(unElemento != null) total += unElemento.getPrecio();
-                     }
-
-                     for (Utils.ElementoMenu unElemento:pedido.getPostre()
-                             ) {
-                         if(unElemento!= null) total += unElemento.getPrecio();
-                     }
-
+                     if(pedido.getPlato() != null) total += pedido.getPlato().getPrecio();
+                     if(pedido.getBebida() != null) total += pedido.getBebida().getPrecio();
+                     if(pedido.getPostre()!= null) total += pedido.getPostre().getPrecio();
 
                      pedido.setCosto(total);
                      pedido.setEsDelivery(toggleReserva.isChecked());
                      pedido.setHoraEntrega(spinnerHora.getSelectedItem().toString());
 
-                     Intent intent = new Intent(MainActivity.this, pago_pedido_activity.class);
+                     Intent intent = new Intent(getApplicationContext(), pago_pedido_activity.class);
+                     Log.v(TAG, pedido.toString());
                      intent.putExtra("pedido", pedido);
-                     startActivityForResult(intent, CODIGO_ESTATUS);
+                     startActivityForResult(intent, CODIGO);
                  } else {
                      Toast.makeText(getApplicationContext(), R.string.yaConfirmado,
                              Toast.LENGTH_SHORT).show();
@@ -215,37 +222,19 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         super.onRestoreInstanceState(savedInstanceState);
         pedido = (Pedido) savedInstanceState.getSerializable("pedido");
         confirmado = savedInstanceState.getBoolean("confirmado");
-        Utils.ElementoMenu[] listaPlatos = pedido.getPlato();
-        Utils.ElementoMenu[] listaPostres= pedido.getPostre();
-        Utils.ElementoMenu[] listaBebidas= pedido.getBebida();
+
         StringBuilder texto = new StringBuilder("");
-        if(listaPlatos != null){
+        if (pedido.getPlato() != null) texto.append(pedido.getPlato().toString()).append("\n");
+        if (pedido.getPostre() != null) texto.append(pedido.getPostre().toString()).append("\n");
+        if (pedido.getBebida() != null) texto.append(pedido.getBebida().toString()).append("\n");
 
-            for (Utils.ElementoMenu unElemento : listaPlatos
-                    ) {
-                if (unElemento != null) texto.append(unElemento.toString()).append("\n");
-
-            }
-        }
-        if(listaPostres!=null) {
-            for (Utils.ElementoMenu unElemento : listaPostres
-                    ) {
-                if (unElemento != null) texto.append(unElemento.toString()).append("\n");
-            }
-        }
-        if(listaBebidas != null) {
-            for (Utils.ElementoMenu unElemento : listaBebidas
-                    ) {
-                if (unElemento != null) texto.append(unElemento.toString()).append("\n");
-            }
-        }
         textoPedido.setText(texto.toString());
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CODIGO_ESTATUS) {
+        if(requestCode == CODIGO) {
             if(resultCode == RESULT_OK) {
                 confirmado = true;
                 Tarjeta tarjeta = (Tarjeta) data.getSerializableExtra("tarjeta");

@@ -1,17 +1,16 @@
 package frsf.isi.grupojf.lab02.modelo;
 
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Random;
 
-public class Utils {
+public class Utils implements  java.io.Serializable {
     DecimalFormat f = new DecimalFormat("##.00");
 
     private ElementoMenu[] listaBebidas;
     private ElementoMenu[] listaPlatos;
     private ElementoMenu[] listaPostre;
 
-     public class ElementoMenu implements Serializable{
+     public class ElementoMenu implements  java.io.Serializable {
         private Integer id;
         private String nombre;
         private Double precio;

@@ -23,4 +23,7 @@
     <string name="campos_requeridos">Debe Completar Todos los Campos</string>
     <string name="mensajeConfirmado">El pedido a sido confirmado con un precio de: $ %1$.2f </string>
     <string name="mensajeCancelado">El pedido a sido cancelado</string>
+    <string name="plato_ya_agregado">Ya cuenta con un plato en su pedido</string>
+    <string name="bebida_ya_agregado">Ya cuenta con una bebida en su pedido</string>
+    <string name="postre_ya_agregado">Ya cuenta con un postre en su pedido</string>
 </resources>

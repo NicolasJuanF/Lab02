@@ -14,11 +14,11 @@ public class Pedido implements java.io.Serializable {
     private Boolean esDelivery;
     private String horaEntrega;
 
-    private Utils.ElementoMenu[] bebida;
-    private Utils.ElementoMenu[] plato;
-    private Utils.ElementoMenu[] postre;
+    private Utils.ElementoMenu bebida;
+    private Utils.ElementoMenu plato;
+    private Utils.ElementoMenu postre;
 
-    public Pedido(String nombreCliente, String email, String nombre, Double costo, Boolean esDelivery, String horaEntrega, Utils.ElementoMenu[] bebida, Utils.ElementoMenu[] plato, Utils.ElementoMenu[] postre) {
+    public Pedido(String nombreCliente, String email, String nombre, Double costo, Boolean esDelivery, String horaEntrega, Utils.ElementoMenu bebida, Utils.ElementoMenu plato, Utils.ElementoMenu postre) {
         this.nombreCliente = nombreCliente;
         this.email = email;
         this.nombre = nombre;
@@ -33,9 +33,7 @@ public class Pedido implements java.io.Serializable {
     public Pedido(){
 
         this.costo = 0.0;
-        this.bebida = new Utils.ElementoMenu[0];
-        this.plato = new Utils.ElementoMenu[0];
-        this.postre = new Utils.ElementoMenu[0];
+
     }
 
     public String getNombreCliente() {
@@ -62,15 +60,15 @@ public class Pedido implements java.io.Serializable {
         return horaEntrega;
     }
 
-    public Utils.ElementoMenu[] getBebida() {
+    public Utils.ElementoMenu getBebida() {
         return bebida;
     }
 
-    public Utils.ElementoMenu[] getPlato() {
+    public Utils.ElementoMenu getPlato() {
         return plato;
     }
 
-    public Utils.ElementoMenu[] getPostre() {
+    public Utils.ElementoMenu getPostre() {
         return postre;
     }
 
@@ -98,28 +96,17 @@ public class Pedido implements java.io.Serializable {
         this.horaEntrega = horaEntrega;
     }
 
-    public void setBebida(Utils.ElementoMenu[] bebida) {
+    public void setBebida(Utils.ElementoMenu bebida) {
         this.bebida = bebida;
     }
 
-    public void setPlato(Utils.ElementoMenu[] plato) {
+    public void setPlato(Utils.ElementoMenu plato) {
         this.plato = plato;
     }
 
-    public void setPostre(Utils.ElementoMenu[] postre) {
+    public void setPostre(Utils.ElementoMenu postre) {
         this.postre = postre;
     }
-
-    public void addPlato(Utils.ElementoMenu unPlato){
-
-    }
-    public void addPostre(Utils.ElementoMenu unPostre){
-
-    }
-    public void addBebida(Utils.ElementoMenu unaBebida){
-
-    }
-
 
     @Override
     public String toString() {
@@ -130,9 +117,9 @@ public class Pedido implements java.io.Serializable {
                 ", costo=" + costo +
                 ", esDelivery=" + esDelivery +
                 ", horaEntrega='" + horaEntrega + '\'' +
-                ", bebida=" + Arrays.toString(bebida) +
-                ", plato=" + Arrays.toString(plato) +
-                ", postre=" + Arrays.toString(postre) +
+                ", bebida=" + bebida +
+                ", plato=" + plato +
+                ", postre=" + postre +
                 '}';
     }
 }

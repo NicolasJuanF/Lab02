@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.VectorEnabledTintResources;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,7 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.io.Serializable;
 
 import frsf.isi.grupojf.lab02.modelo.Pedido;
 import frsf.isi.grupojf.lab02.modelo.Tarjeta;
@@ -44,8 +48,12 @@ public class pago_pedido_activity extends AppCompatActivity implements View.OnCl
         textoNroTarjeta = (EditText) findViewById(R.id.input_numero_tarjeta);
         botonCancelar = (Button) findViewById(R.id.botonCancelar);
         botonConfirmar = (Button) findViewById(R.id.botonConfirmarPago);
+        intent = getIntent();
         pedido = (Pedido) intent.getSerializableExtra("pedido");
         tarjeta = new Tarjeta();
+
+        botonCancelar.setOnClickListener(this);
+        botonConfirmar.setOnClickListener(this);
 
     }
 
@@ -53,18 +61,23 @@ public class pago_pedido_activity extends AppCompatActivity implements View.OnCl
     public void onClick(View boton) {
         switch(boton.getId()) {
             case R.id.botonConfirmarPago:
-                if(true){//deberia validar los campos
+                if(validarCampos()){//deberia validar los campos
                     tarjeta.setNombre(textoNombre.getText().toString());
                     tarjeta.setCorreo(textoCorreo.getText().toString());
-                    tarjeta.setFechaVencimiento((Date) textoFecha.getText());
+                    try{
+                        SimpleDateFormat simpleDate = new SimpleDateFormat("MM/yy"); // here set the pattern as you date in string was containing like date/month/year
+                        Date date = simpleDate.parse(textoFecha.getText().toString());
+                        tarjeta.setFechaVencimiento(date);
+                    }catch(ParseException ex){
+                        textoFecha.setError("Formato Inválido");
+                    }
+
                     tarjeta.setSeguridad(Integer.parseInt(textoCodigoSeguridad.getText().toString()));
                     tarjeta.setNumero(Integer.parseInt( textoNroTarjeta.getText().toString()));
                     intent.putExtra("tarjeta",tarjeta);
                     intent.putExtra("pedido", pedido);//no se si esta bien devolverlo asi nomas
                     setResult(RESULT_OK, intent);
                     finish();
-                }else{
-                    Toast.makeText(pago_pedido_activity.this, R.string.campos_requeridos, Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.botonCancelar:
@@ -75,4 +88,34 @@ public class pago_pedido_activity extends AppCompatActivity implements View.OnCl
 
         }
     }
+
+    public Boolean validarCampos(){
+        Boolean bandera=true;
+        if(TextUtils.isEmpty(textoCorreo.getText())){
+            textoCorreo.setError("Este Campo es requerido");
+            bandera = false;
+        }
+        if(TextUtils.isEmpty(textoNombre.getText())){
+            textoNombre.setError("Este Campo es requerido");
+            bandera = false;
+        }
+        if(TextUtils.isEmpty(textoFecha.getText())){
+            textoFecha.setError("Este Campo es requerido");
+            bandera = false;
+        }
+        if(TextUtils.isEmpty(textoCodigoSeguridad.getText())){
+            textoCodigoSeguridad.setError("Este Campo es requerido");
+            bandera = false;
+        }
+        if(TextUtils.isEmpty(textoNroTarjeta.getText())){
+            textoNroTarjeta.setError("Este Campo es requerido");
+            bandera = false;
+        }
+
+        return bandera;
+    }
+
+
+
+
 }
