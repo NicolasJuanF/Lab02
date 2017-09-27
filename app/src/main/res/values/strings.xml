@@ -26,4 +26,5 @@
     <string name="plato_ya_agregado">Ya cuenta con un plato en su pedido</string>
     <string name="bebida_ya_agregado">Ya cuenta con una bebida en su pedido</string>
     <string name="postre_ya_agregado">Ya cuenta con un postre en su pedido</string>
+    <string name="pedido_vacio">No puede confirmar un pedido vacio</string>
 </resources>

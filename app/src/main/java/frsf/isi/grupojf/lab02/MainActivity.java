@@ -185,11 +185,12 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                  itemSeleccionado = null;
                  radioGroup.clearCheck();
                  confirmado = false;
+                 pedido = new Pedido();//reseteo el pedido
                  miAdaptador=new ArrayAdapter<>(this,android.R.layout.simple_list_item_single_choice, vacio);
                  lv.setAdapter(miAdaptador);
                  break;
              case R.id.botonConfirmar:
-                 if(!confirmado) {
+                 if(!confirmado && (pedido.getPlato() != null || pedido.getBebida()!=null || pedido.getPostre()!=null )) {
                      Double total = 0.0;
                      if(pedido.getPlato() != null) total += pedido.getPlato().getPrecio();
                      if(pedido.getBebida() != null) total += pedido.getBebida().getPrecio();
@@ -203,8 +204,11 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                      Log.v(TAG, pedido.toString());
                      intent.putExtra("pedido", pedido);
                      startActivityForResult(intent, CODIGO);
-                 } else {
+                 } else if ( confirmado){
                      Toast.makeText(getApplicationContext(), R.string.yaConfirmado,
+                             Toast.LENGTH_SHORT).show();
+                 }else{
+                     Toast.makeText(getApplicationContext(), R.string.pedido_vacio,
                              Toast.LENGTH_SHORT).show();
                  }
                  break;

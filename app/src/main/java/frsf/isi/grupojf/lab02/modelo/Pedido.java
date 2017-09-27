@@ -31,9 +31,7 @@ public class Pedido implements java.io.Serializable {
     }
 
     public Pedido(){
-
         this.costo = 0.0;
-
     }
 
     public String getNombreCliente() {
