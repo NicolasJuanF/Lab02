@@ -243,14 +243,10 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                 confirmado = true;
                 Tarjeta tarjeta = (Tarjeta) data.getSerializableExtra("tarjeta");
                 pedido = (Pedido) data.getSerializableExtra("pedido");
-//                pedido.setNombre();//no se de que nombre habla
                 pedido.setNombreCliente(tarjeta.getNombre());
                 pedido.setEmail(tarjeta.getCorreo());
 
-
                 double monto = pedido.getCosto();
-//                DecimalFormat df = new DecimalFormat("##.##");
-//                txtDetallesPedido.setText(txtDetallesPedido.getText().toString() + "\nTotal: $ " + df.format(monto));
 
                 Toast.makeText(getApplicationContext(), getString(R.string.mensajeConfirmado, monto), Toast.LENGTH_SHORT).show();
             } else if(resultCode == RESULT_CANCELED) {
