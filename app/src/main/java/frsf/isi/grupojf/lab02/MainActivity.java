@@ -83,24 +83,6 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         switch (id){
             case -1:
                 break;
-            case R.id.radioPlato:
-
-                break;
-            case R.id.radioPostre:
-
-                break;
-            case R.id.radioBebida:
-
-                break;
-        }
-    }
-
-
-    public void onRadioButtonClicked(View v){
-        final int id = v.getId();
-        switch (id){
-            case -1:
-                break;
             case  R.id.radioPlato:
                 //cargar lista platos
                 elementos=utils.getListaPlatos();
@@ -119,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         }
         lv.setAdapter(miAdaptador);
     }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
